@@ -1,0 +1,88 @@
+{
+  "projectType": "frontend",
+  "projectName": "Primordial-Sim",
+  "projectDescription": "A real-time WebGL particle ecosystem simulator where organisms eat, hunt, flee, flock, reproduce, mutate, and evolve — featuring an integrated multi-provider AI Lab Partner that observes, designs experiments, and writes research reports on the living world.",
+  "theme": "luma",
+  "primaryColor": "#4a9eff",
+  "lightColor": "#00e5c8",
+  "darkColor": "#050a14",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart",
+              "controls"
+            ]
+          },
+          {
+            "group": "Simulation",
+            "pages": [
+              "simulation/ecosystem-mechanics",
+              "simulation/genetic-evolution",
+              "simulation/scenario-presets",
+              "simulation/performance"
+            ]
+          },
+          {
+            "group": "AI Lab Partner",
+            "pages": [
+              "ai-lab/overview",
+              "ai-lab/providers",
+              "ai-lab/experiments",
+              "ai-lab/quick-actions"
+            ]
+          },
+          {
+            "group": "Configuration",
+            "pages": [
+              "configuration/world-settings",
+              "configuration/species-settings",
+              "configuration/rules-behavior",
+              "configuration/evolution-settings",
+              "configuration/visual-settings"
+            ]
+          },
+          {
+            "group": "Deployment & Sharing",
+            "pages": [
+              "deployment/self-hosting",
+              "deployment/sharing-export"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Real-time WebGL rendering of up to 60,000 organisms at 60fps using Structure of Arrays (SoA) data layout",
+    "Spatial hash grid (40px cells) for O(1) neighbor lookups enabling massive organism counts",
+    "Four heritable genetic traits (Speed, Aggression, Efficiency, Perception) with configurable mutation producing emergent natural selection",
+    "Five behavioral force drives (hunt, flee, flock, food attraction, separation) producing emergent territorial and flocking behaviors",
+    "Multi-provider AI Lab Partner supporting OpenAI, Anthropic, xAI, and any OpenAI-compatible local endpoint",
+    "Automated experiment engine that parses AI-proposed JSON protocols, applies parameter changes, captures before/after snapshots, and generates reports",
+    "Rock-Paper-Scissors food chain mode creating Lotka-Volterra population oscillations",
+    "Configurable food oases that concentrate resources geographically and drive territorial competition",
+    "Six scenario presets ranging from peaceful aquarium to extinction event",
+    "Procedural Web Audio soundscape reactive to population levels, reproduction, and kills",
+    "Session recording via MediaRecorder API with optional audio capture",
+    "Settings share via URL encoding and export/import via .primordial file format",
+    "Zero dependencies — single self-contained HTML file, no build step, no backend"
+  ],
+  "publicApiSurface": [
+    "callProviderAPI(messages, systemPrompt) — unified multi-provider AI adapter",
+    "getSimSnapshot() — captures full simulation state as structured JSON context",
+    "startExperiment(config) — executes an AI-generated experiment protocol",
+    "captureSettings() / applySettings(s) — serialize and restore all simulation parameters",
+    "shareSettingsLink() — encodes settings as base64 URL parameter",
+    "exportSettings() / importSettings(file) — .primordial file format I/O",
+    "PRESETS object — six named scenario configurations with 20+ parameter values each",
+    "Slider IDs: sOrganisms, sFood, sFoodRate, sSpeed, sSpecies, sStartSize, sMaxSize, sOrgSpeed, sLifespan, sReproSize, sOffspring, sOases, sEatRatio, sEatGain, sHunt, sFlee, sFlock, sFoodDrive, sSeparation, sMutRate, sMutStr",
+    "Checkbox IDs: chkSameSpecies, chkFoodChain, chkMutation, chkEvoSpeed, chkEvoAggro, chkEvoEfficiency, chkEvoPerception, chkGlow, chkDeathFX, chkShowOases",
+    "Experiment JSON protocol: { hypothesis, changes: {sliderId: value}, checkboxes: {id: bool}, duration }"
+  ]
+}

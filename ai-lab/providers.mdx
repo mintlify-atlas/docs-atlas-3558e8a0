@@ -1,0 +1,77 @@
+---
+title: "AI Providers"
+description: Configure OpenAI, Anthropic, xAI, or a local AI model as the Lab Partner in Primordial-Sim.
+---
+
+The AI Lab Partner supports four providers through a unified adapter. You can switch providers at any time from within the AI Lab panel — your settings persist in `localStorage` between sessions.
+
+## Provider comparison
+
+| Provider | Endpoint | Default model | API key required |
+|----------|----------|---------------|------------------|
+| **OpenAI** | `api.openai.com/v1/chat/completions` | `gpt-4o` | Yes |
+| **Anthropic** | `api.anthropic.com/v1/messages` | `claude-sonnet-4-20250514` | Yes |
+| **xAI** | `api.x.ai/v1/chat/completions` | `grok-3-mini` | Yes |
+| **Custom / Local** | Any OpenAI-compatible URL | `http://localhost:1234/v1/chat/completions` | No |
+
+## Setting up a provider
+
+<Steps>
+  <Step title="Open the AI Lab panel">
+    Press **L** or click the star icon (&#9883;) in the top-right corner of the screen.
+  </Step>
+  <Step title="Expand provider settings">
+    Click the **AI Provider Settings** header at the top of the panel. The settings section collapses and expands on click.
+  </Step>
+  <Step title="Select your provider">
+    Use the **Provider** dropdown to choose OpenAI, Anthropic, xAI, or Custom / Local. The model field updates automatically to the default for that provider. If you select Custom / Local, an additional **Endpoint URL** field appears.
+  </Step>
+  <Step title="Enter your API key">
+    Paste your API key into the **API Key** field. The field uses password masking. For local models, leave this field empty — no key is required.
+  </Step>
+  <Step title="Set the model (optional)">
+    The **Model** field is pre-filled with the provider's default. Change it to any model your account has access to (e.g. `gpt-4-turbo`, `claude-opus-4-5`, `grok-3`).
+  </Step>
+  <Step title="Save and test">
+    Click **Save Settings** to persist your configuration, then click **Test Connection** to verify the provider responds. The status line below the buttons shows the result.
+  </Step>
+</Steps>
+
+## Custom / Local models
+
+The Custom / Local option accepts any URL exposing an OpenAI-compatible chat completions endpoint. Compatible servers include:
+
+- **LM Studio** — default URL: `http://localhost:1234/v1/chat/completions`
+- **Ollama** — default URL: `http://localhost:11434/v1/chat/completions`
+- **vLLM** — configure to match your server's port
+- **text-generation-webui** — enable the OpenAI extension
+
+Set the **Endpoint URL** to your server's address, leave the API Key field blank, and set the Model field to the model name your server expects.
+
+<Tip>
+  Local models require no API key and work fully offline (aside from the simulation itself, which has no network requirements). This is a good option if you want to experiment without cloud API costs or for environments without internet access.
+</Tip>
+
+## Format differences handled transparently
+
+The `callProviderAPI` adapter normalizes provider-specific request and response formats so the rest of the system does not need to care which provider is active.
+
+**Anthropic** uses the Messages API:
+- System prompt is passed as a separate top-level `system` parameter
+- Requires the `anthropic-version` and `anthropic-dangerous-direct-browser-access` headers
+- Returns a `content` array of content blocks; the adapter joins block text to produce a single string
+
+**OpenAI, xAI, and Custom/Local** use the chat completions format:
+- System prompt is prepended as a `{role: "system"}` message in the messages array
+- The `Authorization: Bearer <key>` header is used for authentication
+- Returns `choices[0].message.content` as the response text
+
+## Settings persistence
+
+Settings are saved to `localStorage` under the key `primordial-ai-config` as a JSON object containing `provider`, `apiKey`, `model`, and `customUrl`. They are loaded automatically when the page opens.
+
+Your API key never leaves your browser except in direct API calls to your chosen provider.
+
+<Warning>
+  Some cloud AI providers block direct browser-to-API requests with CORS headers. Anthropic explicitly supports direct browser access with the `anthropic-dangerous-direct-browser-access` header, which Primordial includes automatically. OpenAI and xAI generally allow direct browser requests. If you encounter CORS errors with a custom endpoint, you may need to configure your local server to include `Access-Control-Allow-Origin: *` response headers.
+</Warning>

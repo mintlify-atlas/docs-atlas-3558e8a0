@@ -1,0 +1,119 @@
+---
+title: "Scenario Presets"
+description: "Six tuned ecosystem scenarios for different experiences"
+---
+
+Primordial ships with six hand-tuned presets, each calibrated to produce a distinct ecosystem character. Select a preset from the **World** tab dropdown — the simulation resets immediately with the new parameters.
+
+<CardGroup cols={2}>
+  <Card title="Stable Eden" icon="leaf">
+    **The peaceful aquarium.** High food supply, low aggression, and strong flocking create a world where territories form gradually and species coexist in loose equilibrium. Low mutation rate keeps gene drift slow — you can watch subtle evolution over long observation periods without dramatic upheaval.
+
+    | Parameter | Value |
+    |---|---|
+    | Organisms | 4,000 |
+    | Food Pellets | 3,000 |
+    | Food Rate | 25/s |
+    | Species | 5 |
+    | Speed | 1.0 |
+    | Hunt Drive | 0.3 |
+    | Flee Drive | 1.0 |
+    | Flock Cohesion | 0.8 |
+    | Mutation Rate | 0.08 |
+
+    **Watch for:** Colorful territorial clusters forming organically. Gentle size stratification as some lineages trend larger. Rare predation events that cause brief panic ripples through flocks.
+  </Card>
+
+  <Card title="Arms Race" icon="bolt">
+    **Rapid evolutionary pressure under scarcity.** Moderate food shortage combined with a high mutation rate (0.25) and low eat ratio (1.25×) drives constant evolutionary change. Any gene advantage is quickly amplified by selection, and species with suboptimal traits decline fast.
+
+    | Parameter | Value |
+    |---|---|
+    | Organisms | 5,000 |
+    | Food Pellets | 1,800 |
+    | Food Rate | 12/s |
+    | Species | 4 |
+    | Speed | 1.2 |
+    | Hunt Drive | 1.2 |
+    | Flee Drive | 1.8 |
+    | Flock Cohesion | 0.3 |
+    | Mutation Rate | 0.25 |
+
+    **Watch for:** Gene averages shifting visibly in the AI Lab analysis. Species that fall behind evolutionarily declining while adaptive species surge. Frequent near-extinction events followed by recovery bursts.
+  </Card>
+
+  <Card title="Battle Royale" icon="skull">
+    **Massive carnage with almost no resources.** 12,000 organisms compete for only 600 food pellets at a trickle spawn rate. Survival is nearly impossible — most species go extinct within minutes. High hunt drive (2.5) and a very forgiving eat ratio (1.1×) mean most organisms can eat each other with minimal size advantage.
+
+    | Parameter | Value |
+    |---|---|
+    | Organisms | 12,000 |
+    | Food Pellets | 600 |
+    | Food Rate | 4/s |
+    | Species | 6 |
+    | Speed | 1.5 |
+    | Hunt Drive | 2.5 |
+    | Flee Drive | 1.2 |
+    | Flock Cohesion | 0.1 |
+    | Mutation Rate | 0.15 |
+
+    **Watch for:** The population graph collapsing dramatically in the first 30 seconds. Mass extinction events leaving 1–2 dominant species. The last survivors tend to have high efficiency genes — starvation resistance is the ultimate edge when food is this scarce.
+  </Card>
+
+  <Card title="Superorganism" icon="circles-three">
+    **Maximum flocking — species as single entities.** Flock cohesion at 2.0 (5× the default) causes species to move as tight, unified swarms resembling slime molds or colonial organisms under a microscope. Low hunt drive and moderate food keep populations stable enough to observe the collective motion.
+
+    | Parameter | Value |
+    |---|---|
+    | Organisms | 6,000 |
+    | Food Pellets | 2,500 |
+    | Food Rate | 18/s |
+    | Species | 4 |
+    | Speed | 0.9 |
+    | Hunt Drive | 0.5 |
+    | Flee Drive | 1.5 |
+    | Flock Cohesion | 2.0 |
+    | Mutation Rate | 0.10 |
+
+    **Watch for:** Species consolidating into a small number of massive swarms that patrol the map as single units. When swarms from different species collide, brief violent encounters followed by separation. Enable trails for spectacular motion blur on the swarm paths.
+  </Card>
+
+  <Card title="Food Chain Cycle" icon="arrows-clockwise">
+    **Rock-paper-scissors predation producing population waves.** Three species form a circular predation chain: each hunts the next in sequence. No species can dominate because every predator is also prey. This produces textbook **Lotka-Volterra oscillations** — populations rise and fall in rhythmic waves visible on the graph.
+
+    | Parameter | Value |
+    |---|---|
+    | Organisms | 4,500 |
+    | Food Pellets | 2,200 |
+    | Food Rate | 18/s |
+    | Species | 3 |
+    | Hunt Drive | 1.0 |
+    | Flee Drive | 1.6 |
+    | Flock Cohesion | 0.5 |
+    | Food Chain | **Enabled** |
+    | Mutation Rate | 0.12 |
+
+    **Watch for:** The three-line population graph cycling in and out of phase. Occasional synchronization events where all three populations dip simultaneously. Note that Food Chain mode uses a 5×5 grid scan radius (vs. 3×3 standard), so organisms see further — perception genes matter more here.
+  </Card>
+
+  <Card title="Extinction Event" icon="flame">
+    **Abundance that collapses.** Starts with 8,000 organisms and 4,000 food pellets — apparently a paradise. But the food spawn rate is only 2/s, far too slow to replenish what 8,000 organisms consume. The initial food supply is eaten within minutes, and a slow mass die-off begins. Eight species compete in the bottleneck, and only the most adapted survive.
+
+    | Parameter | Value |
+    |---|---|
+    | Organisms | 8,000 |
+    | Food Pellets | 4,000 |
+    | Food Rate | 2/s |
+    | Species | 8 |
+    | Hunt Drive | 1.0 |
+    | Flee Drive | 1.5 |
+    | Flock Cohesion | 0.6 |
+    | Mutation Rate | 0.12 |
+
+    **Watch for:** The population graph peaking early then declining in waves as species hit carrying capacity at different sizes. Which traits survive the bottleneck? Open the AI Lab Partner and ask it to analyze which species are most vulnerable as the food supply depletes.
+  </Card>
+</CardGroup>
+
+<Tip>
+  The **Custom** option in the preset dropdown lets you freely adjust all parameters without resetting the simulation. Any slider or checkbox change automatically switches the preset selector to "Custom". You can save your configuration as a shareable URL using the **Share Link** button, or export it as a `.primordial` file using **Export** — both preserve every slider and toggle value so you can return to exactly this world later.
+</Tip>

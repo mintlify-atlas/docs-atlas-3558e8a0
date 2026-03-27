@@ -1,0 +1,68 @@
+---
+title: "Species Settings"
+description: "Configure species count, sizing, lifespan, reproduction, and food oases."
+---
+
+The **Species** tab controls the initial conditions for each species population — how many species compete, how large they grow, how long they live, and where food concentrates in the world.
+
+## Sliders
+
+| Setting | Range | Default | Description |
+|---|---|---|---|
+| Number of Species | 2 – 12 (step 1) | 5 | How many distinct species are created when the world initializes. Each species gets a unique color from the 12-color palette. |
+| Starting Size | 1.0 – 8.0 (step 0.5) | 3.0 | The size of every organism at birth. Size determines the initial energy pool since `size = sqrt(energy) × 1.5`. |
+| Max Size | 8 – 40 (step 1) | 18 | The upper size limit an organism can reach by eating. Organisms at max size can no longer grow but continue consuming energy. |
+| Organism Speed | 0.3 – 4.0 (step 0.1) | 1.2 | Base movement speed for all organisms. The Speed Gene can mutate this value up or down over generations. |
+| Lifespan | 10 – 120 s (step 5) | 30 | Maximum age in seconds before an organism dies naturally. Shorter lifespans increase generational turnover and speed up evolution. |
+| Reproduce at Size | 5 – 30 (step 1) | 12 | Size threshold that triggers reproduction. When an organism's size reaches this value it spawns offspring at Starting Size, and its own energy is reduced to 40% (causing it to shrink). |
+| Offspring Count | 1 – 5 (step 1) | 2 | Number of offspring produced per reproduction event. Higher counts grow populations quickly but also stress food supply. |
+| Food Oases | 0 – 8 (step 1) | 4 | Number of food-rich zones placed randomly in the world. Food spawn is biased 60% toward oases and 40% random. |
+
+<Warning>
+Changing **Number of Species** triggers `initWorld` and resets the entire simulation.
+</Warning>
+
+<Tip>
+Keep **Reproduce at Size** well below **Max Size** — if they are equal or close, organisms reproduce the instant they could grow further, preventing large predators from ever developing. A gap of at least 6 units (e.g., Reproduce at 12, Max at 18) allows a meaningful size hierarchy.
+</Tip>
+
+## Species color assignment
+
+Species are assigned colors in index order from a fixed 12-color palette:
+
+| Index | Name | Hue |
+|---|---|---|
+| 0 | Red | 0.00 |
+| 1 | Orange | 0.08 |
+| 2 | Gold | 0.15 |
+| 3 | Green | 0.30 |
+| 4 | Teal | 0.45 |
+| 5 | Cyan | 0.55 |
+| 6 | Blue | 0.65 |
+| 7 | Indigo | 0.75 |
+| 8 | Purple | 0.83 |
+| 9 | Magenta | 0.92 |
+| 10 | Lime | 0.18 |
+| 11 | Emerald | 0.38 |
+
+Hue values are passed directly to the GLSL `hsv()` function in the particle fragment shader.
+
+## Size–energy relationship
+
+An organism's rendered size is derived from its internal energy value:
+
+```text
+size = sqrt(energy) × 1.5
+```
+
+This means energy scales with the square of size — a larger organism needs proportionally more food to maintain its size and to grow further. This relationship naturally limits unchecked growth and creates ecological pressure.
+
+## Food oases mechanics
+
+Each oasis is placed at a random position within the canvas with a radius between 80 and 200 px (`80 + random() × 120`). A random strength value between 2 and 5 is also assigned per oasis.
+
+When a food pellet spawns:
+- **60%** of the time it is placed within or near an oasis (biased toward that oasis center)
+- **40%** of the time it is placed at a uniformly random canvas location
+
+With **Show Food Oases** enabled in the Visual tab, semi-transparent teal circles mark each zone.

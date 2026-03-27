@@ -1,0 +1,179 @@
+---
+title: "Sharing & Export"
+description: "Share configurations via URL, export/import .primordial files, and record sessions"
+---
+
+Primordial provides three ways to save and share your simulation configurations, plus a built-in session recorder. All controls are in the **World** tab of the left panel.
+
+## Share Link
+
+The **Share Link** button encodes your entire simulation configuration as base64 JSON and appends it to the current URL as a `?s=` query parameter.
+
+When you click **Share Link**:
+
+1. All slider and checkbox values are captured via `captureSettings()`.
+2. The settings object is serialized to JSON and encoded with `btoa()` (base64).
+3. The encoded string is appended to the page URL: `?s=<base64-encoded-settings>`.
+4. The full URL is copied to your clipboard via `navigator.clipboard`.
+5. If clipboard access is denied (e.g. non-HTTPS context), the full URL is displayed in the UI instead so you can copy it manually.
+
+When someone opens a Share Link, the simulation automatically decodes the `?s=` parameter on load and applies the settings before the world initializes.
+
+<Warning>
+  Share Link URLs encode the full settings object as base64 JSON. With all 23 sliders and 10 checkboxes included, these URLs can be quite long. Some platforms truncate long URLs. For reliable sharing of named configurations, use **Export** instead.
+</Warning>
+
+## Export & Import `.primordial` Files
+
+<Tip>
+  Use Export when you want to save a named configuration locally — it produces a human-readable JSON file you can organize, version, and share as an attachment.
+</Tip>
+
+### Exporting Settings
+
+The **Export** button downloads a `.primordial` file containing all current slider and checkbox values.
+
+**Filename format:** `primordial-[preset]-[date].primordial`
+
+For example: `primordial-armsrace-2024-11-15.primordial`
+
+If the preset is set to `Custom`, the filename uses `custom` as the preset segment.
+
+### File Format
+
+The file is plain JSON with a `.primordial` extension. Version 3 format:
+
+```json
+{
+  "_format": "primordial-settings",
+  "_version": 3,
+  "_date": "2024-11-15T18:30:00.000Z",
+  "_preset": "armsrace",
+  "sliders": {
+    "sOrganisms": "5000",
+    "sFood": "1800",
+    "sFoodRate": "12",
+    "sSpeed": "1.2",
+    "sSpecies": "4",
+    "sStartSize": "2.5",
+    "sMaxSize": "20",
+    "sOrgSpeed": "1.3",
+    "sLifespan": "30",
+    "sReproSize": "11",
+    "sOffspring": "2",
+    "sOases": "3",
+    "sEatRatio": "1.25",
+    "sEatGain": "0.55",
+    "sHunt": "1.2",
+    "sFlee": "1.8",
+    "sFlock": "0.3",
+    "sFoodDrive": "1.4",
+    "sSeparation": "0.6",
+    "sMutRate": "0.25",
+    "sMutStr": "0.30",
+    "sFoodGlow": "1.0",
+    "sTrail": "0"
+  },
+  "checks": {
+    "chkSameSpecies": true,
+    "chkFoodChain": false,
+    "chkMutation": true,
+    "chkEvoSpeed": true,
+    "chkEvoAggro": true,
+    "chkEvoEfficiency": true,
+    "chkEvoPerception": true,
+    "chkGlow": true,
+    "chkDeathFX": true,
+    "chkShowOases": true
+  }
+}
+```
+
+#### Slider IDs included in export
+
+| ID | Control |
+|---|---|
+| `sOrganisms` | Organisms |
+| `sFood` | Food Pellets |
+| `sFoodRate` | Food Spawn Rate |
+| `sSpeed` | Simulation Speed |
+| `sSpecies` | Number of Species |
+| `sStartSize` | Starting Size |
+| `sMaxSize` | Max Size |
+| `sOrgSpeed` | Organism Speed |
+| `sLifespan` | Lifespan |
+| `sReproSize` | Reproduce at Size |
+| `sOffspring` | Offspring Count |
+| `sOases` | Food Oases |
+| `sEatRatio` | Size Advantage to Eat |
+| `sEatGain` | Energy from Eating |
+| `sHunt` | Hunt Drive |
+| `sFlee` | Flee Drive |
+| `sFlock` | Flock Cohesion |
+| `sFoodDrive` | Food Attraction |
+| `sSeparation` | Separation Force |
+| `sMutRate` | Mutation Rate |
+| `sMutStr` | Mutation Strength |
+| `sFoodGlow` | Food Glow |
+| `sTrail` | Trail Length |
+
+#### Checkbox IDs included in export
+
+| ID | Control |
+|---|---|
+| `chkSameSpecies` | Same Species Protected |
+| `chkFoodChain` | Food Chain (Rock-Paper-Scissors) |
+| `chkMutation` | Enable Mutation |
+| `chkEvoSpeed` | Speed Gene evolves |
+| `chkEvoAggro` | Aggression Gene evolves |
+| `chkEvoEfficiency` | Efficiency Gene evolves |
+| `chkEvoPerception` | Perception Gene evolves |
+| `chkGlow` | Additive Glow |
+| `chkDeathFX` | Death Particles |
+| `chkShowOases` | Show Food Oases |
+
+### Importing Settings
+
+The **Import** button opens a file picker that accepts `.primordial` and `.json` files.
+
+When a file is selected:
+
+1. The file is read as text and parsed as JSON.
+2. The importer checks that `_format === 'primordial-settings'`. Files that fail this check are rejected with an error message.
+3. If valid, all slider and checkbox values are applied and the world resets automatically.
+4. A confirmation message shows the version and preset name of the loaded file.
+
+## Session Recording
+
+<Note>
+  Session recording uses the **MediaRecorder API**. Chrome and Firefox have full support. Safari has limited MediaRecorder support and may not be able to record — Chrome or Firefox is recommended for reliable recording.
+</Note>
+
+The **Record** button (in the World tab) captures the simulation canvas as a video file.
+
+### How it works
+
+- The canvas is captured at **30 fps** using `canvas.captureStream(30)`.
+- If sound is enabled, audio is captured via a `MediaStreamDestination` on the Web Audio graph and merged into the stream.
+- The video is encoded using the best available codec in priority order: VP9+Opus, VP8+Opus, VP9, VP8, or plain WebM.
+- Video bitrate is set to **5 Mbps**.
+- The output file is a **`.webm`** container.
+
+### Output filename
+
+Filenames use an ISO timestamp with colons and `T` replaced by dashes:
+
+```
+primordial-2024-11-15T18-30-00.webm
+```
+
+The download is triggered automatically when recording stops.
+
+### Recording states
+
+| State | Button label | Indicator |
+|---|---|---|
+| Idle | `⏺ Record` | Hidden |
+| Recording | `⏹ Stop` | Pulsing **REC** badge (top-right) |
+
+Clicking **Record** while already recording stops the recording and triggers the download immediately.

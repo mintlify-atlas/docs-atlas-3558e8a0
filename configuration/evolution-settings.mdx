@@ -1,0 +1,51 @@
+---
+title: "Evolution Settings"
+description: "Control mutation rate, strength, and which genetic traits can evolve."
+---
+
+The **Evolve** tab determines whether offspring can differ from their parents, how frequently mutations occur, and which of the four genetic traits are eligible to change across generations.
+
+## Mutation controls
+
+| Setting | Type | Range | Default | Description |
+|---|---|---|---|---|
+| Enable Mutation | Checkbox | — | On | Master toggle. When off, offspring are genetic clones of their parent regardless of individual gene toggles. |
+| Mutation Rate | Slider | 0 – 0.5 (step 0.01) | 0.15 | Probability (per enabled gene, per reproduction event) that a gene value mutates. 0.15 means each enabled gene has a 15% chance of changing. |
+| Mutation Strength | Slider | 0.01 – 0.5 (step 0.01) | 0.20 | Range of a single mutation. The actual change is `(random() - 0.5) × mutationStrength`, so 0.20 means a shift between −0.10 and +0.10 per event. |
+
+<Warning>
+Mutation Strength above **0.4** causes rapid random drift. Gene values can swing far from their initial range within a few generations, potentially destabilizing all species simultaneously rather than producing directed selection pressure.
+</Warning>
+
+## Per-gene toggles
+
+Each gene can be individually frozen. A frozen gene is still inherited by offspring — it just never receives a mutation delta.
+
+| Gene | Default Toggle | What freezing it does |
+|---|---|---|
+| Speed Gene | On | Locks movement speed at its initialized value. All speed variation across organisms reflects Starting Size and Organism Speed slider values only. |
+| Aggression Gene | On | Locks hunt/flee bias at its initialized value. Predation behavior is fixed; ecological balance comes entirely from food supply and size dynamics. |
+| Efficiency Gene (metabolism) | On | Locks metabolic rate at its initialized value. Energy consumption per unit time cannot evolve; organisms neither become more nor less efficient feeders. |
+| Perception Gene (sight range) | On | Locks perception radius at its initialized value. Organisms cannot evolve better or worse awareness of nearby food, prey, or predators. |
+
+<Tip>
+Freeze the Speed Gene and Aggression Gene together to isolate Efficiency and Perception evolution. This lets you study how metabolic optimization and sensory range co-evolve without the confounding effect of arms races in raw speed or aggression.
+</Tip>
+
+## Reproduction mutation logic
+
+When an organism reproduces:
+
+1. Each offspring inherits the parent's exact gene values as a baseline.
+2. If **Enable Mutation** is on, each enabled gene is evaluated independently:
+   - A random number in `[0, 1)` is drawn.
+   - If it is less than `mutationRate`, the gene mutates by `±(random() × mutationStrength)`.
+3. Disabled genes skip step 2 entirely — they pass through unchanged.
+
+```text
+For each enabled gene:
+  if random() < mutRate:
+    gene += (random() - 0.5) * mutStr
+```
+
+Because each gene is evaluated independently, it is possible (and common) for some genes to mutate while others do not in the same reproduction event.

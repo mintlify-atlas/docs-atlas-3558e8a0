@@ -1,0 +1,93 @@
+---
+title: "Self-Hosting"
+description: "Deploy Primordial on GitHub Pages or any static host"
+---
+
+<Note>
+  A live demo is available at [https://jkh2.github.io/Primordial-Sim/](https://jkh2.github.io/Primordial-Sim/) — no installation required.
+</Note>
+
+Primordial is a **single self-contained HTML file** (`index.html`). There is no build step, no npm, no dependencies, and no server required. Hosting it is as simple as serving one file.
+
+## GitHub Pages
+
+<Steps>
+  <Step title="Fork or clone the repository">
+    Fork [jkh2/Primordial-Sim](https://github.com/jkh2/Primordial-Sim) on GitHub, or clone it to your own account:
+
+    ```bash
+    git clone https://github.com/jkh2/Primordial-Sim.git
+    ```
+  </Step>
+
+  <Step title="Enable GitHub Pages">
+    In your repository, go to **Settings → Pages**. Under **Source**, select the `main` branch and click **Save**.
+
+    GitHub will begin building and deploying the site automatically. This usually takes under a minute.
+  </Step>
+
+  <Step title="Visit your deployment">
+    Once Pages is enabled, your simulation will be live at:
+
+    ```
+    https://[username].github.io/Primordial-Sim/
+    ```
+
+    Replace `[username]` with your GitHub username.
+  </Step>
+</Steps>
+
+## Running Locally
+
+No server is needed. Open `index.html` directly in any modern browser:
+
+```bash
+# macOS
+open index.html
+
+# Linux
+xdg-open index.html
+
+# Windows — double-click index.html, or:
+start index.html
+```
+
+The full simulation runs immediately — organisms, physics, WebGL rendering, sound, and all UI panels. Nothing is fetched from a server at runtime.
+
+## Static File Hosts
+
+<Tip>
+  Any static file host works. Drop `index.html` into Netlify, Vercel, Amazon S3, Cloudflare Pages, or any web server and Primordial will run without modification. No configuration files, no build output directories — just one file.
+</Tip>
+
+## Browser Requirements
+
+Primordial requires any modern browser with WebGL support. No WebGL2 is required.
+
+<CardGroup cols={2}>
+  <Card title="Supported Browsers">
+    - Chrome
+    - Firefox
+    - Safari
+    - Edge
+  </Card>
+  <Card title="Not Required">
+    - WebGL 2
+    - Browser extensions
+    - Plugins
+    - A network connection (for the simulation itself)
+  </Card>
+</CardGroup>
+
+If WebGL is unavailable, the page will display a message: `WebGL not supported.`
+
+## AI Lab Partner & Offline Use
+
+The simulation itself — organisms, evolution, physics, sound — runs **fully offline**. No network requests are made during normal operation.
+
+The **AI Lab Partner** (right-side panel) makes API calls to the AI provider you configure:
+
+- **Cloud providers** (OpenAI, Anthropic, xAI): require internet access and an API key.
+- **Local models** (Ollama, LM Studio, vLLM, or any OpenAI-compatible server): work **fully offline**. Set the provider to `Custom / Local` and point the endpoint URL at your local server (e.g. `http://localhost:1234/v1/chat/completions`). No API key is required.
+
+API keys are stored in your browser's `localStorage` only — they are never sent to any server other than the AI provider you select.

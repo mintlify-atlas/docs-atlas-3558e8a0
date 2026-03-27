@@ -1,0 +1,82 @@
+---
+title: "AI Lab Partner"
+description: Overview of Primordial's integrated AI research partner — an active scientist that observes the live simulation, designs experiments, and writes structured reports.
+---
+
+The AI Lab Partner is a fully integrated research assistant built into Primordial-Sim. It is not a passive chatbot. It reads the live simulation state on every interaction, proposes controlled experiments, executes them automatically by adjusting simulation parameters, and produces structured lab reports on the results.
+
+Think of it as a co-investigator watching the same world you are, with access to the same data — and a scientific method to apply to it.
+
+## Accessing the AI Lab
+
+Press **L** or click the **star/sparkle icon** (&#9883;) in the top-right corner of the screen to open the AI Lab panel. The panel slides in from the right and can be closed with the same key or the X button inside the panel.
+
+## Four integrated systems
+
+The AI Lab Partner is built from four subsystems that work together.
+
+### 1. Multi-Provider Adapter (`callProviderAPI`)
+
+A unified API layer that supports multiple AI providers behind a single interface. The rest of the system calls `callProviderAPI()` and receives text — which provider is active, how its request format differs, and how to parse its response is handled transparently.
+
+Supported providers:
+- **OpenAI** — chat completions format, system message in the messages array
+- **Anthropic** — Messages API with the system prompt as a separate parameter, returns content blocks
+- **xAI** — OpenAI-compatible chat completions format
+- **Custom/Local** — any OpenAI-compatible endpoint (LM Studio, Ollama, vLLM, text-generation-webui)
+
+### 2. State Snapshot Engine (`getSimSnapshot`)
+
+Captures the complete simulation state on demand. This snapshot is included as system context with every AI interaction, so the AI always knows the current state of the world when it responds.
+
+The snapshot includes:
+- Simulation time and generation count
+- Total organisms alive and food supply
+- Per-species data: population, average size, average energy, and all four gene averages (speed, aggression, efficiency, perception)
+- Extinction events (species with zero population)
+- Top predator (species name, kill count, and size)
+- All current simulation settings (hunt drive, flee drive, mutation rate, food chain mode, etc.)
+
+### 3. Experiment Engine (`startExperiment` / `checkExperiment` / `analyzeExperiment`)
+
+When the AI proposes an experiment, it outputs a structured JSON protocol. The system automatically detects this protocol in the AI's response, applies the specified parameter changes to the simulation, starts a countdown timer, captures a before-snapshot at experiment start and an after-snapshot when the timer expires, then sends both snapshots back to the AI for comparative analysis and report generation.
+
+Experiments start automatically 3 seconds after a protocol is detected in the AI's response.
+
+### 4. Conversational Interface
+
+A chat panel with a freeform text input (press Enter to send, 500 character limit) and five quick-action buttons that send pre-written analysis prompts with a single click. The AI maintains a rolling conversation history for context continuity.
+
+<Note>
+  The AI Lab maintains the last 10 messages of conversation history. Each API call sends up to the 10 most recent messages, so the AI retains context across follow-up questions and can refer back to earlier analysis within a session.
+</Note>
+
+## API key privacy
+
+Your API key is stored in your browser's `localStorage` only under the key `primordial-ai-config`. It is never sent to any third party and never touches any server other than the AI provider you have selected. If you use a local model, no API key is required at all.
+
+## Explore the AI Lab
+
+<CardGroup cols={3}>
+  <Card
+    title="AI Providers"
+    icon="plug"
+    href="/ai-lab/providers"
+  >
+    Configure OpenAI, Anthropic, xAI, or a local model as your Lab Partner.
+  </Card>
+  <Card
+    title="Running Experiments"
+    icon="flask"
+    href="/ai-lab/experiments"
+  >
+    How the AI designs and automatically executes controlled experiments.
+  </Card>
+  <Card
+    title="Quick Actions"
+    icon="bolt"
+    href="/ai-lab/quick-actions"
+  >
+    One-click analysis, comparisons, predictions, and full reports.
+  </Card>
+</CardGroup>

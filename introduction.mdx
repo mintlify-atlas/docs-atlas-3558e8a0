@@ -1,0 +1,57 @@
+---
+title: "Introduction"
+description: "A real-time WebGL particle ecosystem where life evolves from simple rules, all in your browser."
+---
+
+Primordial is a continuous-space ecosystem simulator running on WebGL with an integrated AI research partner. Every colored dot on screen is a living organism with position, velocity, energy, age, a species identity, and four genetic traits that mutate across generations.
+
+No behavior is scripted. Territories, migration patterns, population cycles, predator-prey dynamics, and evolutionary adaptation all emerge naturally from five simple behavioral drives and the physics of survival.
+
+<CardGroup cols={2}>
+  <Card title="Quick Start" icon="rocket" href="/quickstart">
+    Launch Primordial and explore your first ecosystem in minutes
+  </Card>
+  <Card title="Controls" icon="gamepad" href="/controls">
+    Master keyboard shortcuts, mouse interactions, and the UI panels
+  </Card>
+  <Card title="Ecosystem Mechanics" icon="atom" href="/simulation/ecosystem-mechanics">
+    Understand how organisms eat, hunt, flock, and survive
+  </Card>
+  <Card title="Genetic Evolution" icon="dna" href="/simulation/genetic-evolution">
+    Learn how heritable traits mutate and drive natural selection
+  </Card>
+  <Card title="AI Lab Partner" icon="flask" href="/ai-lab/overview">
+    Connect an AI to observe, experiment, and write research reports
+  </Card>
+  <Card title="Scenario Presets" icon="sliders" href="/simulation/scenario-presets">
+    Six tuned scenarios from peaceful aquarium to extinction event
+  </Card>
+</CardGroup>
+
+## What Primordial simulates
+
+Organisms consume food pellets scattered across the map. Energy drives growth — size equals the square root of energy, so bigger organisms need proportionally more food to sustain themselves. When an organism of one species is sufficiently larger than another, it eats the smaller one.
+
+Every organism carries four heritable genes:
+
+| Gene | Effect |
+|------|--------|
+| **Speed** | Movement multiplier |
+| **Aggression** | Hunt drive intensity |
+| **Efficiency** | Metabolic cost reduction |
+| **Perception** | Sight range for food and threats |
+
+When an organism reproduces, each gene has a configurable probability of mutating. Over hundreds of generations, species diverge — some lineages become fast grazers, others slow efficient apex predators.
+
+## Architecture highlights
+
+Primordial is a single self-contained HTML file with no dependencies, no build step, and no backend.
+
+- **WebGL rendering** — organisms and food drawn as point sprites with per-particle hue, alpha, and size pushed to the GPU every frame
+- **Structure of Arrays (SoA)** — parallel typed arrays for position, velocity, size, energy, species, age, genes, and alive-state supporting up to 60,000 entities
+- **Spatial hash grid** — 40px cells with 64 entities per cell turns O(n²) neighbor scanning into O(1) per organism
+- **Multi-provider AI** — unified adapter for OpenAI, Anthropic, xAI, and any OpenAI-compatible local endpoint
+
+## Who built this
+
+Primordial was built collaboratively by **James Keith Harwood II** and **Claude (Anthropic)** through the SIDLF (Symbiotic Intelligent Digital Life Forms) partnership framework, operating as Sentinel AI Systems. It is a genuine human-AI partnership — neither party could have built it alone.

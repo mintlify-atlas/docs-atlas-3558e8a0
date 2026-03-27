@@ -1,0 +1,100 @@
+---
+title: "Performance"
+description: "Performance characteristics and optimization tips for Primordial"
+---
+
+Primordial runs entirely in the browser with no server-side computation. Performance scales with organism count, food pellet count, and species count. The engine is designed to reach 60 fps on consumer hardware at population sizes that make the ecosystem visually interesting.
+
+## Tested Configurations
+
+| Device Class | Organism Range | Target FPS | Notes |
+|---|---|---|---|
+| **Desktop (1080p+)** | 8,000 – 20,000 | 60 fps | Modern GPU handles point sprite rendering well above 20k |
+| **Laptop** | 5,000 – 8,000 | 60 fps | Integrated graphics becomes the bottleneck above ~10k |
+| **Mobile** | 2,000 – 4,000 | 30 – 60 fps | Adaptive startup detects mobile and sets a safe default |
+
+## Adaptive Startup
+
+On first load, `adaptiveCount()` selects a safe default organism count based on device capability:
+
+```js
+function adaptiveCount() {
+  const touch = window.matchMedia?.('(pointer:coarse)')?.matches;
+  if (touch) return (Math.min(window.innerWidth, window.innerHeight) < 700) ? 2000 : 4000;
+  if (window.innerWidth > 1500) return 8000;
+  if (window.innerWidth > 1100) return 5000;
+  return 3000;
+}
+```
+
+- **`pointer: coarse`** (touchscreen) → 2,000 (small screen) or 4,000 (tablet)
+- **Wide desktop (>1500 px)** → 8,000
+- **Mid desktop (>1100 px)** → 5,000
+- **Narrower** → 3,000
+
+You can always increase the organism count manually via the **Organisms** slider after load.
+
+## Spatial Hash Grid
+
+The spatial hash grid is the single most important performance feature in Primordial. Without it, each of N organisms would need to check every other organism for behavioral interactions — O(n²) distance calculations, or **2.5 billion checks per frame** at 50,000 organisms.
+
+With the grid:
+
+- The map is divided into **40 px cells**.
+- Each cell holds up to **64 organism references**.
+- Each organism checks only its **3×3 cell neighborhood** — at most 576 candidates.
+- In practice, each organism checks **~30–50 neighbors** per frame.
+- This reduces behavioral scan complexity to effectively **O(n)** — linear in organism count.
+
+A separate food grid uses the same 40 px cell size with up to 32 food references per cell, scanned with a configurable 1–3 cell radius based on each organism's perception gene.
+
+## WebGL Rendering
+
+All organisms and food pellets are rendered as **point sprites** using a single WebGL draw call per frame:
+
+- Four interleaved attribute buffers track position (x, y), hue, alpha, and size for every visible entity.
+- Buffers are uploaded to the GPU as `DYNAMIC_DRAW` every frame — no persistent GPU state between frames.
+- The fragment shader computes a soft circular glow per point using HSV color, avoiding texture lookups entirely.
+- **Additive blending** (when glow mode is on) allows thousands of overlapping sprites to composite naturally with no sorting required.
+- **Trail mode** replaces the frame clear with a semi-transparent fade quad, creating motion trails with zero additional draw calls.
+
+## Structure of Arrays (SoA)
+
+Organism data is stored in parallel typed arrays rather than an array of objects:
+
+```js
+const ox  = new Float32Array(MAX_ORG);  // x positions
+const oy  = new Float32Array(MAX_ORG);  // y positions
+const ovx = new Float32Array(MAX_ORG);  // x velocities
+// ... energy, size, species, age, genes, etc.
+```
+
+This layout is **cache-friendly** for the simulation loop: iterating over all x positions accesses a single contiguous memory block rather than jumping between object fields scattered in heap memory. At 60,000 entities, cache efficiency has a measurable impact on simulation throughput.
+
+## Settings That Most Impact Performance
+
+| Setting | Impact | Guidance |
+|---|---|---|
+| **Organism Count** | Highest | Each organism requires a behavioral scan, physics update, metabolism check, and render entry every frame. |
+| **Food Pellet Count** | Medium | Food grid must be rebuilt each frame; large food counts increase grid insertion time and food scan time. |
+| **Number of Species** | Low–Medium | More species increases the variance of behavioral interactions (hunt/flee checks branch on species identity). |
+| **Food Chain Mode** | Medium | Expands the behavioral scan from 3×3 to 5×5 grid cells per organism — ~2.8× more neighbor candidates to evaluate. |
+| **Trail Length** | Low | Replaces a `gl.clear` with a quad draw — negligible GPU cost but disables some optimizations in very long trail lengths. |
+| **Death Particles** | Low | Capped at 2,000 concurrent particles; rendering cost is minimal even at high kill rates. |
+
+## Browser Requirements
+
+Primordial requires only **WebGL 1** — no WebGL2, no extensions, no plugins. It runs in any modern browser:
+
+| Browser | Support |
+|---|---|
+| Chrome / Chromium | Full support |
+| Firefox | Full support |
+| Safari (macOS / iOS) | Full support |
+| Edge | Full support |
+
+The simulation runs fully offline — no network requests are made during simulation. The AI Lab Partner requires internet access (or a local model server) for API calls, but the simulation itself has no network dependency.
+
+<Tip>
+  If frame rate drops, press **1** to set simulation speed to 0.5× — this halves the physics timestep and gives the browser more wall-clock time per simulation second without changing the organism count. Keys **1–4** set speed to 0.5×, 1×, 2×, and 5× respectively. Running at 0.5× speed is also useful for detailed observation of fast predation events or tight evolutionary inflection points.
+</Tip>

@@ -1,97 +1,61 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+title: "Primordial-Sim"
+description: "A real-time WebGL particle ecosystem where organisms eat, hunt, flee, flock, reproduce, mutate, and evolve — all from simple rules, all in your browser."
 ---
 
-## Setting up
+Welcome to the Primordial documentation. Primordial is a continuous-space ecosystem simulator built on WebGL, featuring an integrated AI Lab Partner that observes, designs experiments, and writes research reports on the living world — no install required, no backend, no dependencies.
 
-Get your documentation site up and running in minutes.
-
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
-
-## Make it yours
-
-Design a docs site that looks great and empowers your users.
-
-<Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
+<CardGroup cols={2}>
+  <Card title="Quick Start" icon="rocket" href="/quickstart">
+    Open Primordial in your browser and explore your first ecosystem in minutes
   </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
+  <Card title="Controls & UI" icon="gamepad" href="/controls">
+    Mouse interactions, keyboard shortcuts, and panel navigation
   </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
+  <Card title="Ecosystem Mechanics" icon="atom" href="/simulation/ecosystem-mechanics">
+    How organisms eat, hunt, flock, reproduce, and die
   </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
+  <Card title="Genetic Evolution" icon="dna" href="/simulation/genetic-evolution">
+    Heritable traits, mutation, and emergent natural selection
   </Card>
-</Columns>
+  <Card title="AI Lab Partner" icon="flask" href="/ai-lab/overview">
+    Connect an AI provider to analyze, experiment, and report
+  </Card>
+  <Card title="Scenario Presets" icon="sliders" href="/simulation/scenario-presets">
+    Six tuned scenarios from peaceful aquarium to extinction event
+  </Card>
+</CardGroup>
 
-## Create beautiful pages
+## Get started in 30 seconds
 
-Everything you need to create world-class documentation.
+<Steps>
+  <Step title="Open Primordial">
+    Visit [jkh2.github.io/Primordial-Sim](https://jkh2.github.io/Primordial-Sim/) in any modern browser with WebGL support (Chrome, Firefox, Safari, Edge). No install, no sign-up.
+  </Step>
+  <Step title="Choose a scenario">
+    Select a preset from the **Scenario Presets** dropdown in the World tab — try **Stable Eden** for a peaceful start or **Arms Race** to watch evolution accelerate.
+  </Step>
+  <Step title="Interact with the world">
+    **Left-click** anywhere to drop food. **Right-click** to spawn organisms. **Hover** over any dot to inspect its species, genes, and kill count. Press **Space** to pause.
+  </Step>
+  <Step title="Connect the AI Lab">
+    Press **L** or click the star icon (top-right) to open the AI Lab Partner panel. Add your API key and click **Analyze Now** to get an immediate ecological report on your living world.
+  </Step>
+</Steps>
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
-  </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
-  </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
-  </Card>
-</Columns>
+## Why Primordial
 
-## Need inspiration?
-
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+<CardGroup cols={2}>
+  <Card title="Education" icon="graduation-cap">
+    Natural selection, predator-prey dynamics, carrying capacity, and genetic drift all emerge visibly without any scripting — observable in real time
+  </Card>
+  <Card title="Research intuition" icon="microscope">
+    A fast interactive sandbox for building intuition about how parameter changes cascade through an ecosystem
+  </Card>
+  <Card title="AI-assisted science" icon="robot">
+    The AI Lab Partner formulates hypotheses, designs controlled experiments, executes them, collects data, and produces analysis reports
+  </Card>
+  <Card title="Zero friction" icon="bolt">
+    Single HTML file, no build step, no backend — runs fully offline except for AI API calls
+  </Card>
+</CardGroup>

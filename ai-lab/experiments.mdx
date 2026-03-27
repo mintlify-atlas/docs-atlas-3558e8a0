@@ -1,0 +1,135 @@
+---
+title: "Running Experiments"
+description: How the AI designs and automatically executes controlled experiments in Primordial-Sim, including the JSON protocol format and all valid parameter IDs.
+---
+
+The experiment system is what separates the AI Lab Partner from a simple chatbot. When the AI proposes an experiment, it outputs a machine-readable JSON protocol. Primordial detects this protocol, applies the parameter changes to the live simulation, runs a countdown timer, captures before and after snapshots, and asks the AI to write a structured lab report — all automatically.
+
+## Experiment workflow
+
+<Steps>
+  <Step title="AI proposes a hypothesis">
+    Ask the AI to design an experiment (use the **Design Experiment** quick action or ask in freeform). The AI responds with a hypothesis, proposed parameter changes, and a duration.
+  </Step>
+  <Step title="Protocol is parsed">
+    The system scans the AI's response for an `experiment` code block. If found, it parses the JSON protocol inside.
+  </Step>
+  <Step title="Countdown begins">
+    A system message appears in the chat: "Experiment protocol detected. Starting in 3 seconds..." Three seconds later, `startExperiment()` fires automatically.
+  </Step>
+  <Step title="Parameters are applied">
+    The experiment engine applies all specified slider and checkbox changes to the simulation immediately. The before-snapshot is captured at this moment.
+  </Step>
+  <Step title="Experiment runs">
+    The simulation runs under the new parameters. A pulsing green dot and countdown appear in the experiment status bar at the bottom of the AI panel, showing seconds remaining.
+  </Step>
+  <Step title="After-snapshot captured">
+    When the timer expires, `checkExperiment()` detects completion and calls `getSimSnapshot()` to capture the post-experiment state.
+  </Step>
+  <Step title="AI writes the lab report">
+    Both snapshots are sent to the AI via `analyzeExperiment()`. The AI produces a structured report covering hypothesis, observations, analysis, conclusion, and a suggested follow-up experiment.
+  </Step>
+</Steps>
+
+## Experiment protocol format
+
+The AI outputs experiments as a fenced code block with the language tag `experiment`. The system matches this block with a regex and parses the contents as JSON.
+
+```json
+{
+  "hypothesis": "Increasing hunt drive will favor aggressive species",
+  "changes": {
+    "sHunt": "2.0",
+    "sFlee": "0.5"
+  },
+  "checkboxes": {
+    "chkFoodChain": true
+  },
+  "duration": 30
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `hypothesis` | string | The scientific question the experiment tests. Displayed in the chat and included in the lab report. |
+| `changes` | object | Slider IDs mapped to new values (as strings). Applied via `setSliderValue()`. |
+| `checkboxes` | object | Checkbox IDs mapped to boolean values. Applied via `setCheckbox()`. Optional. |
+| `duration` | number | Experiment length in simulation seconds. |
+
+## Valid slider IDs
+
+These are the slider element IDs the experiment engine recognizes. Any of these can appear in the `changes` object.
+
+| ID | Label | Tab |
+|----|-------|-----|
+| `sOrganisms` | Organisms | World |
+| `sFood` | Food Pellets | World |
+| `sFoodRate` | Food Spawn Rate | World |
+| `sSpeed` | Simulation Speed | World |
+| `sSpecies` | Number of Species | Species |
+| `sStartSize` | Starting Size | Species |
+| `sMaxSize` | Max Size | Species |
+| `sOrgSpeed` | Organism Speed | Species |
+| `sLifespan` | Lifespan | Species |
+| `sReproSize` | Reproduce at Size | Species |
+| `sOffspring` | Offspring Count | Species |
+| `sOases` | Food Oases | Species |
+| `sEatRatio` | Size Advantage to Eat | Rules |
+| `sEatGain` | Energy from Eating | Rules |
+| `sHunt` | Hunt Drive | Rules |
+| `sFlee` | Flee Drive | Rules |
+| `sFlock` | Flock Cohesion | Rules |
+| `sFoodDrive` | Food Attraction | Rules |
+| `sSeparation` | Separation Force | Rules |
+| `sMutRate` | Mutation Rate | Evolve |
+| `sMutStr` | Mutation Strength | Evolve |
+
+## Valid checkbox IDs
+
+These are the checkbox element IDs the experiment engine recognizes. Any of these can appear in the `checkboxes` object.
+
+| ID | Label | Tab |
+|----|-------|-----|
+| `chkSameSpecies` | Same Species Protected | Rules |
+| `chkFoodChain` | Food Chain (Rock-Paper-Scissors) | Rules |
+| `chkMutation` | Enable Mutation | Evolve |
+| `chkEvoSpeed` | Speed Gene evolves | Evolve |
+| `chkEvoAggro` | Aggression Gene evolves | Evolve |
+| `chkEvoEfficiency` | Efficiency Gene evolves | Evolve |
+| `chkEvoPerception` | Perception Gene evolves | Evolve |
+
+## What the snapshots contain
+
+Both the before and after snapshots are produced by `getSimSnapshot()`. Each snapshot includes:
+
+- `simTime` — elapsed simulation time in seconds
+- `generation` — total reproduction events
+- `totalAlive` — current organism count
+- `totalFood` — current food pellet count
+- `species` — array of per-species objects, each with:
+  - `name` — color name (Red, Orange, Gold, Green, Teal, Cyan, Blue, Indigo, Purple, Magenta, Lime, Emerald)
+  - `population` — live organism count
+  - `avgSize` — mean organism size
+  - `avgEnergy` — mean energy level
+  - `genes` — `{ speed, aggro, efficiency, perception }` as percentages (0–100)
+- `extinctions` — array of species names with zero population
+- `topPredator` — `{ species, kills, size }` for the single organism with the most kills, or `null`
+- `settings` — current values for key parameters (hunt, flee, mutation rate, food chain, etc.)
+
+## Lab report format
+
+The AI structures its post-experiment analysis report with these five sections:
+
+- **HYPOTHESIS** — restates the hypothesis from the protocol
+- **OBSERVATIONS** — what changed between snapshots: population shifts, extinctions, gene drift
+- **ANALYSIS** — mechanistic explanation of why the changes occurred, referencing simulation rules
+- **CONCLUSION** — whether the data supported or refuted the hypothesis
+- **NEXT EXPERIMENT** — a concrete follow-up suggestion with specific slider values
+
+## Experiment status indicator
+
+While an experiment is running, a pulsing green dot appears in the status bar at the bottom of the AI Lab panel, alongside a countdown in seconds remaining. The indicator disappears automatically when the experiment completes.
+
+<Tip>
+  Use the **Design Experiment** quick action button to prompt the AI to propose an experiment based on whatever is currently happening in the simulation. The AI reads the live snapshot before responding, so its hypotheses are grounded in the actual current state — which species are dominant, which are declining, what the gene distributions look like.
+</Tip>

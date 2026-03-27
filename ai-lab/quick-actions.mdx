@@ -1,0 +1,82 @@
+---
+title: "Quick Actions"
+description: One-click analysis, experiments, comparisons, predictions, and full reports powered by the live simulation state.
+---
+
+The five quick action buttons send pre-written prompts to the AI with a single click. Each prompt is designed to extract a specific type of insight from the current simulation state. The full simulation snapshot is automatically included as system context with every request.
+
+## Simulation context included with every message
+
+Every message — whether sent via a quick action or typed freeform — includes the complete live snapshot as AI context:
+
+- Current simulation time and generation
+- Total organisms alive and food count
+- Per-species population, average size, average energy, and gene averages (speed, aggression, efficiency, perception)
+- All current parameter settings
+- Active extinctions
+- Top predator (species, kill count, size)
+
+The AI always knows the current state of the world. You do not need to describe it.
+
+## Quick actions
+
+<AccordionGroup>
+  <Accordion title="Analyze Now">
+    **What it does:** Requests a general-purpose snapshot analysis of the current ecosystem.
+
+    **Prompt sent to the AI:**
+    > Analyze the current state of the ecosystem. What species are thriving? Which are struggling? What evolutionary trends do you see in the gene data? What do you predict will happen next?
+
+    **When to use it:** As a starting point. Run this at the beginning of a session, after a scenario change, or whenever something unexpected happens in the simulation. The AI will identify dominant species, flag struggling lineages, surface gene drift trends, and make short-term predictions based on the current population dynamics.
+  </Accordion>
+  <Accordion title="Design Experiment">
+    **What it does:** Asks the AI to propose a controlled experiment tailored to the current simulation state, complete with a hypothesis, slider changes, and a duration. If the AI includes a valid experiment JSON protocol in its response, the system will automatically execute it 3 seconds later.
+
+    **Prompt sent to the AI:**
+    > Design an experiment to test an interesting hypothesis about this ecosystem. Provide specific slider changes and a duration. Output the experiment JSON so I can run it automatically.
+
+    **When to use it:** When you want to test something but aren't sure what to change, or when you want the AI to drive the scientific inquiry. The AI bases its hypothesis on what it observes in the current snapshot — which species look vulnerable, which parameters seem to be at an inflection point, which evolutionary pressures are strongest.
+  </Accordion>
+  <Accordion title="Compare Species">
+    **What it does:** Requests a detailed comparative fitness analysis of all current species.
+
+    **Prompt sent to the AI:**
+    > Compare all current species in detail. Which has the best genes for survival? Which is most vulnerable? Rank them by fitness based on their population trends and gene profiles.
+
+    **When to use it:** When multiple species are competing and you want to understand which has the evolutionary edge. The AI uses the gene averages (speed, aggression, efficiency, perception) and population numbers from the snapshot to build a ranked fitness assessment. Useful before designing an experiment targeting weaker species or testing what makes a dominant species vulnerable.
+  </Accordion>
+  <Accordion title="Predict Outcomes">
+    **What it does:** Requests a forward-looking prediction of what the ecosystem will look like in approximately 60 seconds of simulation time.
+
+    **Prompt sent to the AI:**
+    > Based on the current population dynamics, gene averages, and food supply, predict what this ecosystem will look like in 60 seconds. Which species will grow? Which will decline? Will any go extinct?
+
+    **When to use it:** When population trends are shifting and you want to know where they are headed. Also useful as a testable prediction — run the prediction, wait 60 seconds, then run **Analyze Now** to see how accurate the forecast was. The AI bases predictions on population trajectory, resource availability, and competitive gene advantages.
+  </Accordion>
+  <Accordion title="Full Report">
+    **What it does:** Requests a comprehensive research report covering all major ecological dimensions of the current simulation.
+
+    **Prompt sent to the AI:**
+    > Write a comprehensive research report on the current state of this simulation. Cover population dynamics, evolutionary trends, resource distribution, predator-prey relationships, and notable observations. Include specific numbers.
+
+    **When to use it:** After an experiment completes, after a long simulation run, or when you want a thorough record of what has emerged. The report references specific population counts, gene percentages, and predator-prey dynamics by species name. Good for summarizing a session before resetting the world.
+  </Accordion>
+</AccordionGroup>
+
+## Freeform chat
+
+The text input at the bottom of the AI Lab panel accepts any question or instruction. Press **Enter** to send (Shift+Enter for a newline if your browser supports it). The input has a 500 character limit.
+
+Useful freeform questions:
+
+- "Why did the Red species go extinct?"
+- "What mutation rate would maximize genetic diversity across all species?"
+- "Which species is most likely to dominate in the next 2 minutes?"
+- "What would happen if I enabled the Food Chain mode right now?"
+- "Explain the relationship between the Teal and Blue species."
+
+The AI has the full simulation snapshot as context and the conversation history (last 10 messages), so follow-up questions work naturally.
+
+<Tip>
+  A productive workflow: click **Analyze Now** to get oriented, then click **Design Experiment** to let the AI propose something based on what it found, then after the experiment completes automatically, click **Full Report** to get a comprehensive write-up of the before-and-after results. This mirrors the observe → hypothesize → experiment → analyze loop of the scientific method.
+</Tip>

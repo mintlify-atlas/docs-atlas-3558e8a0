@@ -1,80 +1,84 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+title: "Quick Start"
+description: "Get up and running with Primordial in minutes."
 ---
 
-## Get started in three steps
+<Steps>
+  <Step title="Open the simulation">
+    Navigate to [https://jkh2.github.io/Primordial-Sim/](https://jkh2.github.io/Primordial-Sim/) in any modern browser — Chrome, Firefox, Safari, or Edge. No install, no plugins, no build step required.
 
-Get your documentation site running locally and make your first customization.
+    The simulation starts immediately. A splash screen (hint card) displays the core controls. It dismisses automatically on your first interaction.
+  </Step>
 
-### Step 1: Set up your local environment
+  <Step title="Choose a scenario preset">
+    Open the **World** tab in the left panel and find the **Scenario Presets** dropdown. Six presets are available:
 
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
+    | Preset | Organisms | Food | Species | Character |
+    |--------|-----------|------|---------|----------|
+    | Stable Eden | 4,000 | 3,000 | 5 | Peaceful aquarium, high food, territories form gradually |
+    | Arms Race | 5,000 | 1,800 | 4 | High mutation, rapid evolution under moderate scarcity |
+    | Battle Royale | 12,000 | 600 | 6 | Massive population, almost no food, fast carnage |
+    | Superorganism | 6,000 | 2,500 | 4 | Max flocking — species move as tight swarms |
+    | Food Chain Cycle | 4,500 | 2,200 | 3 | Rock-paper-scissors predation, oscillating populations |
+    | Extinction Event | 8,000 | 4,000 | 8 | Abundant start, food dries up, reveals which traits survive |
 
-### Step 2: Deploy your changes
+    Selecting a preset immediately resets the world with its tuned parameters. See [Scenario Presets](/simulation/scenario-presets) for a full breakdown of each.
+  </Step>
 
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
+  <Step title="Interact with the canvas">
+    Click and right-click directly on the simulation canvas to shape the ecosystem in real time:
 
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
+    - **Left-click** — Drop a cluster of 8 food pellets within a ~30px radius at the cursor position. Use this to rescue a starving population or attract organisms to a region.
+    - **Right-click** — Spawn a group of 5 organisms of a random species at the cursor. Useful for reintroducing a species or seeding a new area.
+    - **Hover** — Move the cursor over any organism to open an inspection tooltip showing its species, size, energy, age, kill count, and all four gene values.
+  </Step>
 
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
+  <Step title="Control time with keyboard shortcuts">
+    Use your keyboard to manage simulation speed without touching the UI:
 
-### Step 3: Go live
+    | Key | Action |
+    |-----|--------|
+    | `Space` | Pause / Resume |
+    | `1` | Speed 0.5x (slow motion) |
+    | `2` | Speed 1.0x (default) |
+    | `3` | Speed 2.0x |
+    | `4` | Speed 5.0x (turbo) |
+    | `S` | Toggle ambient sound |
+    | `L` | Toggle AI Lab Partner panel |
+  </Step>
 
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
+  <Step title="Read the UI panels">
+    Two panels frame the canvas:
+
+    **Left panel — Simulation Controls**
+
+    Five tabs let you tune every aspect of the world:
+
+    - **World** — organism count, food settings, speed slider, real-time population graph, and species census
+    - **Species** — species count, starting size, max size, organism speed, lifespan, reproduction thresholds, offspring count, and food oases
+    - **Rules** — predation toggles (same-species protection, food chain mode), size advantage ratio, energy from eating, and the five behavioral drive sliders (Hunt, Flee, Flock, Food Attraction, Separation)
+    - **Evolve** — enable/disable mutation, mutation rate and strength, and per-trait evolution toggles for Speed, Aggression, Efficiency, and Perception
+    - **Visual** — additive glow, death particles, oasis indicators, food glow intensity, and trail length
+
+    The stats bar at the bottom of the left panel shows live **FPS**, **Alive** organism count, **Food** pellet count, and current **Gen** (generation).
+
+    **Right panel — AI Lab Partner**
+
+    Press `L` or click the star icon (&#9883;) in the top-right corner to open the AI Lab. Configure your AI provider, then ask the assistant to analyze the ecosystem, design experiments, compare species, or write a full research report. See [Controls & UI](/controls) for full details.
+  </Step>
+</Steps>
+
+<Tip>
+  **Adaptive organism count on startup** — the default starting organism count adjusts based on your device. On a large desktop display (over 1500px wide) it starts at 8,000. On a mid-range screen it starts at 5,000. On a narrower screen it starts at 3,000. On a touch device (coarse pointer) it starts at 2,000–4,000 depending on screen size. The simulation slider default is 5,000 and the food default is 2,000 with 5 species at speed 1.0x — but the `adaptiveCount()` function adjusts the initial organism count so the simulation runs smoothly regardless of hardware.
+</Tip>
 
 ## Next steps
 
-Now that you have your docs running, explore these key features:
-
 <CardGroup cols={2}>
-
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
-
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
-
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
-
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
-
+  <Card title="Controls & UI" icon="gamepad" href="/controls">
+    Full reference for all mouse controls, keyboard shortcuts, panel tabs, stats bar, and the organism tooltip
+  </Card>
+  <Card title="Scenario Presets" icon="sliders" href="/simulation/scenario-presets">
+    Detailed breakdown of all six presets and when to use each one
+  </Card>
 </CardGroup>
-
-<Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
-</Note>

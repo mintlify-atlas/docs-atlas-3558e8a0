@@ -1,0 +1,58 @@
+---
+title: "World Settings"
+description: "Configure organism count, food supply, speed, and population monitoring."
+---
+
+The **World** tab is the primary control surface for the simulation. It sets the scale of the ecosystem, controls food availability, and provides real-time population monitoring.
+
+## Sliders
+
+| Setting | Range | Default | Description |
+|---|---|---|---|
+| Organisms | 500 – 50,000 (step 500) | 5,000 | Total number of organisms spawned at world initialization. Higher counts increase predator–prey dynamics but require more GPU throughput. |
+| Food Pellets | 100 – 10,000 (step 100) | 2,000 | Maximum number of food pellets present in the world at any time. Organisms consume pellets to gain energy and grow. |
+| Food Spawn Rate | 1 – 80 (step 1) | 15 | Pellets added per second. Low values create scarcity pressure; high values sustain larger populations with less competition. |
+| Simulation Speed | 0.1 – 5.0 (step 0.05) | 1.00 | Multiplier applied to the simulation time step. Values above 1.0 fast-forward evolution; values below 1.0 slow it for detailed observation. |
+
+<Warning>
+Changing **Organisms** or **Number of Species** (in the Species tab) calls `initWorld`, which completely resets the simulation — all organisms, food, generation counter, and population history are cleared.
+</Warning>
+
+## Population graph
+
+The **Population Over Time** canvas tracks per-species organism counts across the last 200 ticks, updating every 0.25 seconds. Each species is drawn as a colored line using that species' assigned hue. The graph gives an at-a-glance view of boom-and-bust cycles, species dominance shifts, and extinction events.
+
+## Species census legend
+
+Below the population graph, the **Species Census** row shows a colored dot for each active species alongside its live organism count. Dots use the same 12-color palette assigned at world initialization. Zero-count species remain listed to make extinctions visible.
+
+## Scenario presets
+
+The **Scenario Presets** dropdown loads a curated set of slider and checkbox values tuned for a specific ecological dynamic:
+
+| Preset | Character |
+|---|---|
+| Stable Eden | High food, low aggression, steady coexistence |
+| Arms Race | Escalating predation pressure, fast mutation |
+| Battle Royale | Extreme scarcity, very high organism count |
+| Superorganism | Strong flocking, low inter-species conflict |
+| Food Chain Cycle | Rock-Paper-Scissors chain enabled with balanced species |
+| Extinction Event | Many species, extremely low food spawn rate |
+| Custom | Manual configuration; set when any slider is moved |
+
+Applying a preset calls `applyPreset()`, then immediately calls `resize()` and `initWorld()` — the world resets automatically with the new parameters. There is no need to click **Reset World** separately after choosing a preset.
+
+## Reset World
+
+The **Reset World** button re-initializes all organisms, food pellets, oases, and the generation counter using the current slider values. Population history is also cleared.
+
+## Stats bar
+
+The stats bar at the bottom of the panel updates every frame:
+
+| Chip | Description |
+|---|---|
+| FPS | Frames rendered per second by the WebGL loop |
+| Alive | Live organism count at the current frame |
+| Food | Active food pellet count at the current frame |
+| Gen | Generation counter, incremented each reproduction event |

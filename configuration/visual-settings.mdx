@@ -1,0 +1,50 @@
+---
+title: "Visual Settings"
+description: "Configure rendering effects, trails, glow, and visual feedback."
+---
+
+The **Visual** tab controls how the WebGL renderer presents organisms, food, and environmental features. All settings take effect immediately without resetting the simulation.
+
+## Checkboxes
+
+| Setting | Default | Description |
+|---|---|---|
+| Additive Glow | On | Switches WebGL blend mode from standard alpha compositing (`gl.ONE_MINUS_SRC_ALPHA`) to additive blending (`gl.ONE`). Overlapping organisms brighten each other rather than covering each other, producing a neon luminescence effect. |
+| Death Particles | On | Spawns a burst of colored particles when an organism dies naturally or is eaten. Each burst uses the dying organism's species hue. Up to 2,000 death-particle slots are maintained in a circular buffer. |
+| Show Food Oases | On | Renders semi-transparent teal circles over each active oasis zone, making food-concentration regions visible at a glance. Oases are defined in the Species tab via the **Food Oases** slider. |
+
+<Note>
+Death Particles can be disabled for a meaningful performance improvement on lower-end devices. Each kill event otherwise triggers multiple particle allocations and per-particle position, velocity, and lifetime updates every frame.
+</Note>
+
+## Sliders
+
+| Setting | Range | Default | Description |
+|---|---|---|---|
+| Food Glow | 0.2 – 2.0 (step 0.1) | 1.0 | Multiplier applied to the WebGL point size of food pellets. Values below 1.0 make pellets smaller and dimmer; values above 1.0 make them larger and more prominent. |
+| Trail Length | 0 – 0.95 (step 0.01) | 0 (Off) | Controls motion trail persistence. The UI displays a text label based on the value: **Off** (0), **Short** (< 0.3), **Medium** (< 0.6), **Long** (≥ 0.6). |
+
+### Trail length labels
+
+| Value range | Label |
+|---|---|
+| 0 | Off |
+| 0.01 – 0.29 | Short |
+| 0.30 – 0.59 | Medium |
+| 0.60 – 0.95 | Long |
+
+## How trails work
+
+When Trail Length is 0, the renderer clears the canvas completely between frames — each frame shows only the current organism positions.
+
+When Trail Length is greater than 0.01, the renderer skips the clear step and instead draws a full-screen quad over the previous frame using:
+
+```text
+fill color: rgba(5, 10, 20, 1 - trailValue)
+```
+
+A trail value of 0.95 means the overlay has only 5% opacity, so previous frames fade very slowly — producing long, comet-like trails. A value of 0.1 applies 90% opacity, fading trails almost immediately.
+
+<Tip>
+Combine **Additive Glow** with a Trail Length in the Long range (0.7 – 0.95) for a bioluminescent deep-sea effect. Organisms leave glowing streaks that bloom where populations are dense, and the dark background color (`rgb(5, 10, 20)`) of the fade overlay matches the default canvas background exactly, keeping the scene clean.
+</Tip>

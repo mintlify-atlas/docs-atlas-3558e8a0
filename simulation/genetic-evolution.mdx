@@ -1,0 +1,105 @@
+---
+title: "Genetic Evolution"
+description: "How heritable traits mutate and drive natural selection in Primordial"
+---
+
+Every organism in Primordial carries four floating-point genes that directly shape its behavior and survival. There is no fitness function and no guided selection — the only pressure shaping these genes is whether their bearer lives long enough to reproduce.
+
+## The Four Genes
+
+| Gene | Effect | Value Range | Formula | Starting Range |
+|---|---|---|---|---|
+| **Speed** | Movement multiplier applied to all velocity updates | 0.05 – 1.0 | `actualSpeed = 0.6 + gSpeed * 0.8` | 0.4 – 0.6 |
+| **Aggression** | Amplifies the hunt force toward prey | 0.05 – 1.0 | `huntForce *= (0.5 + gAggro)` | 0.4 – 0.6 |
+| **Efficiency** | Reduces metabolic energy cost per second | 0.05 – 1.0 | `metaCost = 0.3 * (1.2 - gEfficiency * 0.5)` | 0.4 – 0.6 |
+| **Perception** | Widens the food scan radius | 0.05 – 1.0 | `fScan = min(3, 1 + gPerception * 2)` (in grid cells) | 0.4 – 0.6 |
+
+All genes are initialized in `initWorld` as `0.4 + rand() * 0.2`, giving every organism at world start a gene value between 0.4 and 0.6.
+
+### Speed
+
+A speed gene of 0.0 yields an actual speed multiplier of 0.6×. A gene of 1.0 yields 1.4×. Speed also interacts with organism size — larger organisms have an additional speed penalty of `1 / (1 + size * 0.04)`, so high-speed genes matter more for large organisms trying to overcome this drag.
+
+High speed improves prey pursuit and predator evasion but does not reduce metabolic cost — fast organisms burn energy at the same rate as slow ones, creating a tradeoff between escape ability and efficiency.
+
+### Aggression
+
+Aggression directly scales the hunt force vector: `huntForce *= (0.5 + gAggro)`. An organism with aggression 0.0 still hunts (at 50% base drive), while aggression 1.0 produces 1.5× hunt force. High aggression pushes organisms toward prey more strongly, increasing kill rate — but also pulling them into risky close-range encounters.
+
+### Efficiency
+
+Efficiency reduces the metabolic cost that drains energy every frame. At the default starting range (0.4–0.6), `metaCost` falls between approximately 0.24 and 0.21 energy/second. A highly efficient organism (gene = 1.0) pays only `0.3 * (1.2 - 0.5) = 0.21` energy/second, while an inefficient one (gene = 0.05) pays `0.3 * (1.175) ≈ 0.353` energy/second. In food-scarce environments, efficiency is often the primary survival differentiator.
+
+### Perception
+
+Perception expands the food search radius in grid cells: `fScan = min(3, floor(1 + gPerception * 2))`. At gene = 0.0 this is 1 cell (a 3×3 cell scan area); at gene = 0.5 it reaches 2 cells; at gene = 1.0 it maxes out at 3 cells (a 7×7 cell scan area). Wider perception also affects the behavioral scan radius in Food Chain mode, where organisms with high perception genes effectively "see" further for predators and prey.
+
+## Mutation
+
+Mutation occurs at reproduction. The configurable parameters are:
+
+- **Mutation Rate** (default **0.15**): Probability (0–0.5) that any given gene mutates in a reproduction event.
+- **Mutation Strength** (default **0.20**): Maximum magnitude of a mutation step. The actual shift is `(rand() - 0.5) * mutStr`, giving a uniform distribution over `[-mutStr/2, +mutStr/2]`.
+
+Each gene has an independent toggle:
+- Speed Gene — on/off
+- Aggression Gene — on/off
+- Efficiency Gene — on/off
+- Perception Gene — on/off
+
+Gene values are clamped to [0.05, 1.0] after mutation to prevent degenerate extremes.
+
+<Warning>
+  Disabling all four gene toggles stops evolution entirely — organisms still reproduce and inherit parent values, but no new variation is introduced. Populations will drift toward extinction in challenging environments because no adaptive response is possible. Reproduction continues normally; only the mutation step is skipped for disabled genes.
+</Warning>
+
+## Inheritance
+
+Offspring inherit genes through this exact sequence:
+
+```js
+// Inherit parent genes exactly
+gSpeed[offspring]      = gSpeed[parent];
+gAggro[offspring]      = gAggro[parent];
+gEfficiency[offspring] = gEfficiency[parent];
+gPerception[offspring] = gPerception[parent];
+
+// Independently mutate each enabled gene
+if (mutationOn) {
+  if (speedToggle    && rand() < mutRate) gSpeed[offspring]      = clamp(gSpeed[offspring]      + (rand()-0.5)*mutStr, 0.05, 1.0);
+  if (aggroToggle    && rand() < mutRate) gAggro[offspring]      = clamp(gAggro[offspring]      + (rand()-0.5)*mutStr, 0.05, 1.0);
+  if (effToggle      && rand() < mutRate) gEfficiency[offspring] = clamp(gEfficiency[offspring] + (rand()-0.5)*mutStr, 0.05, 1.0);
+  if (percToggle     && rand() < mutRate) gPerception[offspring] = clamp(gPerception[offspring] + (rand()-0.5)*mutStr, 0.05, 1.0);
+}
+```
+
+There is no sexual recombination — Primordial uses asexual reproduction. Each organism reproduces alone, and offspring are near-clones with independent random mutations.
+
+## Emergent Selection
+
+Primordial has no fitness function and no explicit selection pressure. Natural selection operates solely through differential survival:
+
+- Organisms with favorable gene combinations for the current environment reproduce more often (they live longer and reach the reproduction size threshold more reliably).
+- Organisms with unfavorable genes die of starvation or predation before reproducing.
+- Over hundreds of generations, gene averages shift as the population composition changes.
+
+Common selection outcomes you can observe:
+
+| Environment | Selected Trait | Reason |
+|---|---|---|
+| Food-scarce | High efficiency | Low energy drain survives longer between meals |
+| Heavy predation pressure | High speed or flee response | Fast organisms escape predators more often |
+| Abundant food, no predators | High aggression, low efficiency | Aggressive organisms capture more food and reproductionrate dominates |
+| Food Chain mode | Balanced speed + perception | Organisms must both hunt efficiently and avoid being hunted |
+
+## Species Divergence
+
+All organisms of the same species start with the same gene distribution (0.4–0.6 for all traits), but because mutation is random and independent, different lineages accumulate different mutations. Over many generations, organisms within the same species can diverge significantly — one population might evolve toward high-speed grazers while another becomes slow, efficient ambush predators.
+
+This is **genetic drift** combined with **directional selection**: random mutations cause drift, and differential survival applies directional pressure based on local conditions (food availability, predation intensity, competition).
+
+Hover over any organism to inspect its current gene values live. The population graph tracks per-species counts over time, showing the downstream effects of evolutionary change on population dynamics.
+
+<Tip>
+  Set **Mutation Rate to 0.3 or higher** to dramatically accelerate speciation. You will see gene averages diverge within 1–2 minutes of simulation time. Combine high mutation rate with a food-scarce scenario (Battle Royale or Arms Race) for rapid directional selection — the population bottleneck filters out all but the most adapted gene combinations in just a few generations.
+</Tip>
